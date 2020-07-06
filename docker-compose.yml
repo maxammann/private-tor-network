@@ -117,7 +117,7 @@ services:
     # This will create a hidden service that points to
     # the service "hiddenservice" which is runing nginx. You can 
     # change this to whatever ip or hostname you want
-    TOR_HS_PORT: "443"
+    TOR_HS_PORT: "80"
     TOR_HS_ADDR: "hiddenservice"
   volumes:
     - ./tor:/tor
@@ -134,8 +134,6 @@ services:
   image: nginx
   volumes:
    - ./hiddenservice/nginx.conf:/etc/nginx/conf.d/default.conf
-   - ./hiddenservice/cert.pem:/etc/nginx/cert.pem
-   - ./hiddenservice/key.pem:/etc/nginx/key.pem
   environment:
    - NGINX_HOST=hiddenservice
    - NGINX_PORT=80
