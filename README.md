@@ -4,14 +4,11 @@
 
 ### Quickstart
 
-The easiest way to get a tor network up and running is to use the docker-compose create and then scale function
+The easiest way to get a tor network up and running is to use the docker-compose create
 
 ```
 docker-compose up 
-docker-compose scale relay=5 exit=3 
 ```
-
-This will create 3 directory authorities (DA's), 1 client listning on port 9050, 5 relays, and 3 exits. You can scale to whatever you want. 
 
 ### Uses
 
@@ -39,10 +36,10 @@ rm -rf ./tor
 ### Running Individual Roles
 
 You can manually build a tor network if you don't want to use docker-compose but you'll need to make sure you pass the correct DA fingerprints to each of the servers. Also make sure you create a user defined interface so that it doesn't try to use the default bridge. For example, this would make the first directory authority (DA)
-`docker run -e ROLE=DA --network tornet antitree/private-tor`
+`docker run -e ROLE=DA --network tor_net antitree/private-tor`
 
 Or setup a relay:
-`docker run -e ROLE=RELAY --network tornet antitree/private-tor`
+`docker run -e ROLE=RELAY --network tor_net antitree/private-tor`
 
 Watching the logs on a relay
 `docker logs -f {name of your container}`
@@ -64,33 +61,7 @@ If you'd like to try a very specific version you can rebuild the Dockerfile and 
 
 If you'd like to run an onion service, you can use the `TOR_HS_PORT` and `TOR_HS_ADDRESS` environment variables. By default, there is a hidden service setup in the docker-compose.yml file. 
 
-Example configuration that will run an onion service named "hs" and a web server named "web". This will link the web service to the onion service so that "hs" will forward connections to "web" on port 80. This is done using the `links` configuration feature for docker-compose. 
-
-```
- hs:
-  image: antitree/private-tor
-  expose:
-    - "80"
-  environment:
-    ROLE: HS
-    # This will create a hidden service that points to
-    # the service "web" which is runing nginx. You can 
-    # change this to whatever ip or hostname you want
-    TOR_HS_PORT: "80"
-    TOR_HS_ADDR: "web"
-  volumes:
-    - ./tor:/tor
-  depends_on:
-    - da1
-    - da2
-    - da3
-  links:
-    - web
- web:
-  image: nginx
-  expose:
-    - "80"
-```
+Example configuration that will run an onion service named "hs" and a web server named "hiddenservice". This will link the web service to the onion service so that "hs" will forward connections to "hiddenservice" on port 80. This is done using the `links` configuration feature for docker-compose. 
 
 NOTE: By default, this just displays the nginx start page so you may want to replace the image with a more interesting one or configure the nginx container with some static HTML to host.
 
@@ -114,11 +85,11 @@ The container is built off of [chriswayg/tor-server](https://github.com/chrisway
 The `/util/` directory contains a few scripts to play with one the host computer. Once you have a 
 private tor network up and running you can try out some of the tools in there. 
 
-**Using Arm**:
+**Using Nyx**:
 
 With the tor control port exposed to the host, you can use arm to monitor the client. 
 ```
-apt-get install tor-arm
+apt-get install nyx
 arm
 ```
 NOTE: There is a password to protect the control port right now. Enter "password" when prompted
@@ -128,7 +99,7 @@ NOTE: There is a password to protect the control port right now. Enter "password
 You can also connect arm to one of the containers if you know it's ip. You can find the IPs by running the 
 `get_consensus.py` script provided or however otherway you feel like. 
 
-```arm -i 172.19.0.3:9051```
+```nyx -i 172.19.0.3:9051```
 
 **Get Consensus**:
 
@@ -159,10 +130,6 @@ Here are a few things to try if you're runing into issues:
 * Check permissions for your ./tor folder
 * Delete the files in your ./tor folder so you can start from scratch (or specifically the torrc.da file)
 * To cleanup the environment and start over you can use `docker-compose kill` and `docker-compose rm -ra` to remove them all. 
-
-### TODO
-
-* Wait for someone to yell at me about using scale like this and then move to the new networking
 
 ### Dislaimer
 
