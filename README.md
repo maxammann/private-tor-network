@@ -27,13 +27,13 @@ If you're going "Why do I want this?" here's a few examples:
 
 ### Storage & Tor Network Configuration
 
-All of the required information that other nodes need to know about on the network are stored in a named volume `torvol` which you can find the path for doing `docker volume inspect privatetornetwork_torvol` or use `docker volume ls` to find its name on your system. 
+All of the required information that other nodes need to know about on the network are stored in a directory `./tor`
 
-If you are running multiple instances or are rebuilding it, make sure you delete this named volume or you'll accidentally use a previous iteration's keys. Easiest way is:
+If you are running multiple instances or are rebuilding it, make sure you delete this directory or you'll accidentally use a previous iteration's keys. Easiest way is:
 
 ~~~
 docker-compose rm
-docker volume rm privatetornetwork_torvol
+rm -rf ./tor
 ~~~
 
 ### Running Individual Roles
