@@ -19,7 +19,7 @@ if [ ! -e /tor-config-done ]; then
     # Host specific modifications to the torrc file
     echo -e "DataDirectory ${TOR_DIR}/${TOR_NICKNAME}" >> /etc/tor/torrc
     # Updated to handle docker stack/swarm network overlays
-    TOR_IP=$(ip addr show eth1 | grep "inet" | grep -v '\/32'| awk '{print $2}' | cut -f1 -d'/')
+    TOR_IP=$(ip addr show eth0 | grep "inet" | grep -v '\/32'| awk '{print $2}' | cut -f1 -d'/')
     NICS=$(ip addr | grep 'state UP' | awk '{print $2}' | cut -f1 -d':')
     
     echo "Address ${TOR_IP}" >> /etc/tor/torrc
